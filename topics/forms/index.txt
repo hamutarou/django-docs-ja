@@ -331,28 +331,17 @@ Djangoは使いやすい :doc:`protection against Cross Site Request Forgeries
 非表示と表示フィールドのループ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-もしテンプレート内で、フォームをレイアウト表示しているなら、 Django のデフ
-ォルトを頼るのに反対するように、非表示ではないフィールドよりも異なった
-``<input type="hidden">``　フィールドを扱いたいでしょう。例えば、非表示フィ
-ールドを全く表示させないため、エラーメッセージの "next to" フィールドを置く
-ことは、ユーザの混乱の原因になるでしょう。それらのフィールドのエラーは異な
-った処理が行われるべきです。
+もしテンプレート内で、フォームを手動で表示しているなら、 つまり Django のデフ
+ォルトフォームレイアウトに反対するとき、非表示ではないフィールドより 
+``<input type="hidden">`` フィールドは注意深くを処理するべきです。
+例えば、非表示フィールドは何も表示しないので、エラーメッセージをそのフィールド
+の横に表示した場合、ユーザの混乱の原因になるでしょう。よって、それらの非表示フ
+ィールドのエラーに対しては、別の手段で対処するべきです。
 
-If you're manually laying out a form in a template, as opposed to relying on
-Django's default form layout, you might want to treat ``<input type="hidden">``
-fields differently than non-hidden fields. For example, because hidden fields
-don't display anything, putting error messages "next to" the field could cause
-confusion for your users -- so errors for those fields should be handled
-differently.
-
-Django はループ上で許可されている非表示、表示フィールドのフォームに
-``hidden_fields()`` と ``visible_fields()`` の 2 つのメソッドを提供します。
-ここに、上記の例に、これら2つの関数を利用し修正を行ったものを示します。::
-
-Django provides two methods on a form that allow you to loop over the hidden
-and visible fields independently: ``hidden_fields()`` and
-``visible_fields()``. Here's a modification of an earlier example that uses
-these two methods::
+Django は非表示、表示フィールドに対して、ループを可能にするフォームに、
+``hidden_fields()`` と ``visible_fields()`` という独立した2つのメソッドを規定
+しています。上記の例に対して、これら2つのメソッドを使った場合の、変更点は以下
+のとおりである。::
 
     <form action="/contact/" method="post">
          {# Include the hidden fields #}
@@ -369,15 +358,11 @@ these two methods::
         <p><input type="submit" value="Send message" /></p>
     </form>
 
-この例は、非表示フィールドに任意のエラーは処理されません。ふつう、非表示
-フィールドのエラーは、一時的なフォームを表し、普通のインタラクションなフ
-ォームは、それらに警告を行わないでしょう。しかしながら、それらのフォーム
-エラーに対して、さらに任意のエラーを用意に挿し込むことができるでしょう。
-
-This example does not handle any errors in the hidden fields. Usually, an
-error in a hidden field is a sign of form tampering, since normal form
-interaction won't alter them. However, you could easily insert some error
-displays for those form errors, as well.
+この例では、非表示フィールドに対してのエラーは処理されません。たいていの場合
+、非表示フィールドのエラーは、フォームの改ざんを表します。なぜなら、普通のフ
+ォームのインタラクションを、非表示フィールドに変更すべきではないからある。し
+かしながら、フォームのエラーに対応するエラー表示を簡単に挿し込むこともできる
+でしょう。
 
 .. versionadded:: 1.1
     ``hidden_fields`` と ``visible_fields`` メソッドは Django 1.1 で新しく
@@ -413,12 +398,9 @@ displays for those form errors, as well.
         <p><input type="submit" value="Submit comment" /></p>
     </form>
 
-これを行う部分を頻繁に見つけた場合には、カスタマイズした
-:ref:`inclusion tag<howto-custom-template-tags-inclusion-tags>` を作ること
-を考えるでしょう。
-
-If you find yourself doing this often, you might consider creating a custom
-:ref:`inclusion tag<howto-custom-template-tags-inclusion-tags>`.
+もし、頻繁にこのようなことをするなら、
+:ref:`inclusion tag<howto-custom-template-tags-inclusion-tags>` をカスタマ
+イズすることを検討すべきである。
 
 その他のトピック
 ==================
