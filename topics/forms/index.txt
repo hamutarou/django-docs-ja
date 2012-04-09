@@ -319,17 +319,24 @@ Djangoは使いやすい :doc:`protection against Cross Site Request Forgeries
     ます。
 
 ``field.is_hidden``
-    This attribute is ``True`` if the form field is a hidden field and
-    ``False`` otherwise. It's not particularly useful as a template
-    variable, but could be useful in conditional tests such as::
+    フォームフィールドが非表示フィールドの場合、この属性は ``True`` 、そ
+    うでなければ、 ``False`` になります。テンプレートの変数としては、特に便
+    利でありませんが、以下に示すような条件テストには役立つでしょう。 ::
 
         {% if field.is_hidden %}
            {# Do something special #}
         {% endif %}
 
 
-Looping over hidden and visible fields
+非表示と表示フィールドのループ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+もしテンプレート内で、フォームをレイアウト表示しているなら、 Django のデフ
+ォルトを頼るのに反対するように、非表示ではないフィールドよりも異なった
+``<input type="hidden">``　フィールドを扱いたいでしょう。例えば、非表示フィ
+ールドを全く表示させないため、エラーメッセージの "next to" フィールドを置く
+ことは、ユーザの混乱の原因になるでしょう。それらのフィールドのエラーは異な
+った処理が行われるべきです。
 
 If you're manually laying out a form in a template, as opposed to relying on
 Django's default form layout, you might want to treat ``<input type="hidden">``
@@ -338,22 +345,23 @@ don't display anything, putting error messages "next to" the field could cause
 confusion for your users -- so errors for those fields should be handled
 differently.
 
+Django はループ上で許可されている非表示、表示フィールドのフォームに
+``hidden_fields()`` と ``visible_fields()`` の 2 つのメソッドを提供します。
+ここに、上記の例に、これら2つの関数を利用し修正を行ったものを示します。::
+
 Django provides two methods on a form that allow you to loop over the hidden
 and visible fields independently: ``hidden_fields()`` and
 ``visible_fields()``. Here's a modification of an earlier example that uses
 these two methods::
 
-    <form action="/contact/" method="POST">
-        {% for field in form.visible_fields %}
+    <form action="/contact/" method="post">
+         {# Include the hidden fields #}
+         {% for hidden in form.hidden_fields %}
+         {{ hidden }}
+         {% endfor %}
+         {# Include the visible fields #}
+         {% for field in form.visible_fields %}
             <div class="fieldWrapper">
-
-                {# Include the hidden fields in the form #}
-                {% if forloop.first %}
-                    {% for hidden in form.hidden_fields %}
-                    {{ hidden }}
-                    {% endfor %}
-                {% endif %}
-
                 {{ field.errors }}
                 {{ field.label_tag }}: {{ field }}
             </div>
@@ -361,23 +369,28 @@ these two methods::
         <p><input type="submit" value="Send message" /></p>
     </form>
 
+この例は、非表示フィールドに任意のエラーは処理されません。ふつう、非表示
+フィールドのエラーは、一時的なフォームを表し、普通のインタラクションなフ
+ォームは、それらに警告を行わないでしょう。しかしながら、それらのフォーム
+エラーに対して、さらに任意のエラーを用意に挿し込むことができるでしょう。
+
 This example does not handle any errors in the hidden fields. Usually, an
 error in a hidden field is a sign of form tampering, since normal form
 interaction won't alter them. However, you could easily insert some error
 displays for those form errors, as well.
 
 .. versionadded:: 1.1
-    The ``hidden_fields`` and ``visible_fields`` methods are new in Django
-    1.1.
+    ``hidden_fields`` と ``visible_fields`` メソッドは Django 1.1 で新しく
+    追加されました。
 
-Reusable form templates
+フォームテンプレートの再利用
 -----------------------
 
-If your site uses the same rendering logic for forms in multiple places, you
-can reduce duplication by saving the form's loop in a standalone template and
-using the :ttag:`include` tag to reuse it in other templates::
+複数の場所で同じ描画ロジックのフォームを利用するなら、独立したテンプレートに
+フォームのループと :ttag:`include` タグを保存し、それを他のテンプレート内で
+再利用することで、重複を減らすことができます。
 
-    <form action="/contact/" method="POST">
+    <form action="/contact/" method="post">
         {% include "form_snippet.html" %}
         <p><input type="submit" value="Send message" /></p>
     </form>
@@ -391,15 +404,18 @@ using the :ttag:`include` tag to reuse it in other templates::
         </div>
     {% endfor %}
 
-If the form object passed to a template has a different name within the
-context, you can alias it using the :ttag:`with` tag::
+もしテンプレートに渡されたフォームオブジェクトが、コンテキスト内で異なった
+名前を持っているなら、 :ttag:`include` タグの引数に ``with`` を利用するこ
+とでそれを別名にすることができます。::
 
-    <form action="/comments/add/" method="POST">
-        {% with comment_form as form %}
-            {% include "form_snippet.html" %}
-        {% endwith %}
+    <form action="/comments/add/" method="post">
+        {% include "form_snippet.html" with form=comment_form %}
         <p><input type="submit" value="Submit comment" /></p>
     </form>
+
+これを行う部分を頻繁に見つけた場合には、カスタマイズした
+:ref:`inclusion tag<howto-custom-template-tags-inclusion-tags>` を作ること
+を考えるでしょう。
 
 If you find yourself doing this often, you might consider creating a custom
 :ref:`inclusion tag<howto-custom-template-tags-inclusion-tags>`.
@@ -411,12 +427,14 @@ If you find yourself doing this often, you might consider creating a custom
 とたくさんあります:
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
-   modelforms
    formsets
+   modelforms
    media
    
 .. seealso::
 
-    :ref:`フォーム API リファレンス <ref-forms-index>`
+    :doc:`フォーム API リファレンス </ref/forms/index>`
+        フォームフィールド、フォームウィジェット、フォームやフィールドのバリ
+        デーションを含むすべてのAPIリファレンスをカバーしています。
