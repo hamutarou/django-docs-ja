@@ -4,13 +4,13 @@
 フォームの操作
 ==================
 
-:revision-up-to: 11321 (1.1) unfinished
+:revision-up-to: 17812 (1.4)
 
 .. admonition:: このドキュメントについて
 
     このドキュメントでは、 Django のフォーム処理機能を紹介しています。
-    フォーム API の特定のフィールドに関する詳細は、 :doc:`ref/forms/api` 、
-　　:doc:`/ref/forms/fields` 、 :doc:`/ref/forms/validation` を参照してくだ
+    フォーム API の特定のフィールドに関する詳細は、 :doc:`/ref/forms/api` 、
+    :doc:`/ref/forms/fields` 、 :doc:`/ref/forms/validation` を参照してくだ
     さい。
 
 .. highlightlang:: html+django
@@ -22,13 +22,12 @@
 ムライブラリを使うと、フォーム処理に必要な共通のタスクの面倒を見てくれます。
 フォームライブラリを使えば、以下のようなことを実現できます:
 
-    1. フォームウィジェットから、 HTML フォームを自動的に生成して表示できま
-       す。
-    2. 提出されたデータに対して、バリデーション規則 (validation rule) を適
-       用できます。
-    3. バリデーションエラーを検出したときに、フォームをエラーメッセージ付き
-       で表示できます。
-    4. 提出されたデータを、適切な Python のデータ型に変換できます。
+1. フォームウィジェットから、 HTML フォームを自動的に生成して表示できます。
+2. 提出されたデータに対して、バリデーション規則 (validation rule) を適用できま
+す。
+3. バリデーションエラーを検出したときに、フォームをエラーメッセージ付きで表示で
+きます。
+4. 提出されたデータを、適切な Python のデータ型に変換できます。
 
 概要
 =====
@@ -85,7 +84,7 @@ Django のデータベースモデルによく似た方法でフォームのフ�
 ``subject`` (題名)、 ``message`` (メッセージ)、 ``sender`` (送信者)、そして
 ``cc_myself`` (自分に CC する)、の 4 つのフィールドをフォームに持たせます。
 ``CharField`` や ``EmailField``, ``BooleanField`` はフィールド型です。
-フィールド型の一覧は :doc:`ref/forms/fields` を参照してください。
+フィールド型の一覧は :doc:`/ref/forms/fields` を参照してください。
 
 :ref:`ModelForm </topics/forms/modelforms>` を使えば、フォームを使って
 Django のモデルを直接追加したり編集したりしたいときに、モデルと重複する記述
@@ -132,11 +131,11 @@ Django のモデルを直接追加したり編集したりしたいときに、�
 束縛フォームと非束縛フォームの違いについてもっと詳しく知りたければ、
 :ref:`ref-forms-api-bound-unbound` を参照してください。
 
-Handling file uploads with a form
----------------------------------
+フォームからアップロードされたファイルを扱う
+--------------------------------------------
 
-To see how to handle file uploads with your form see
-:ref:`binding-uploaded-files` for more information.
+フォームからアップロードされたファイルを扱う方法は
+:ref:`binding-uploaded-files` に詳しく書いてあります。
 
 フォームから入力されたデータを処理する
 ----------------------------------------
@@ -192,12 +191,12 @@ To see how to handle file uploads with your form see
 
 .. admonition:: フォームとクロスサイトリクエストフォージェリプロテクション
 
-Djangoは使いやすい :doc:`protection against Cross Site Request Forgeries 
-</ref/contrib/csrf>`を搭載してます. 前述した例のように、 CSRF 保護機能を有
-効にした POST を経由して送信するとき、テンプレートタグの :ttag:`csrf_token` 
-を使うべきです。しかしながら、 CSRF 保護はテンプレート内のフォームに直接紐づ
-いていないため、このタグは、このドキュメント内の以下の例では、省略されてい
-ます。
+  Djangoは使いやすい :doc:`クロスサイトリクエストフォージェリプロテクション
+  </ref/contrib/csrf>` を搭載してます. 前述した例のように、 CSRF 保護機能を有
+  効にした POST を経由して送信するとき、テンプレートタグの :ttag:`csrf_token` 
+  を使うべきです。しかしながら、 CSRF 保護はテンプレート内のフォームに直接紐づ
+  いていないため、このタグは、このドキュメント内の以下の例では、省略されてい
+  ます。
 
 ``form.as_p`` を参照すると、各フィールドとラベルをパラグラフ (``<p>``) タグ
 で囲って出力します。上のテンプレートの例を出力すると、以下のようになります::
@@ -369,11 +368,11 @@ Django は非表示、表示フィールドに対して、ループを可能に�
     追加されました。
 
 フォームテンプレートの再利用
------------------------
+----------------------------
 
 複数の場所で同じ描画ロジックのフォームを利用するなら、独立したテンプレートにフォ
 ームのループと :ttag:`include` タグを保存し、それを他のテンプレート内で再利用す
-ることで、重複を減らすことができます。
+ることで、重複を減らすことができます::
 
     <form action="/contact/" method="post">
         {% include "form_snippet.html" %}
@@ -391,7 +390,7 @@ Django は非表示、表示フィールドに対して、ループを可能に�
 
 もしテンプレートに渡されたフォームオブジェクトが、コンテキスト内で異なった名前
 を持っているなら、 :ttag:`include` タグの引数に ``with`` を利用することでそれを
-別名にすることができます。::
+別名にすることができます::
 
     <form action="/comments/add/" method="post">
         {% include "form_snippet.html" with form=comment_form %}
